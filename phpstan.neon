@@ -1,0 +1,21 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
+
+parameters:
+    # tmpDir dentro del proyecto (en vez del temp del sistema) para poder
+    # cachear el result cache de PHPStan entre corridas.
+    tmpDir: .cache/phpstan
+
+    paths:
+        - app
+        - bootstrap/app.php
+        - config
+        - database
+        - routes
+    level: 6
+    # Sin esto Larastan ignora los casts declarados en el método casts() (solo
+    # lee la propiedad $casts) y tipa las fechas casteadas como string.
+    parseModelCastsMethod: true
+    excludePaths:
+        - tests/

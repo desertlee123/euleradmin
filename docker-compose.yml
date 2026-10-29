@@ -1,0 +1,23 @@
+services:
+    euleradmin:
+        container_name: euleradmin_local
+        build:
+            context: .
+            dockerfile: Dockerfile
+        env_file:
+            - .env
+        ports:
+            - 3017:80
+        volumes:
+            - .:/app                                   # full source bind mount
+            - ./docker/php-custom.dev.ini:/usr/local/etc/php/conf.d/php-custom.ini
+            - ./docker/Caddyfile.dev:/etc/caddy/Caddyfile
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'      # alcanza los servicios del host (túnel SSH a PostgreSQL:8090)
+        environment:
+            - NUM_WORKERS=2
+            - NUM_THREADS=4
+            # Dentro del contenedor el host es `host.docker.internal`; en el host es 127.0.0.1.
+            # El túnel SSH local (`ssh -L 8090:localhost:5432 divi`) corre en el host.
+            - DB_HOST=host.docker.internal
+        restart: unless-stopped
